@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vehicle Rating Predictor</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Vehicle Rating Predictor</h1>
+      <input type="text" id="vehicle" placeholder="Make and Model" />
+      <button onclick="getRating()">Get Rating</button>
+      <div id="result">
+        <img
+          id="vehicle-image"
+          src=""
+          alt="Vehicle image"
+          style="width: 100%; max-width: 400px; display: none; margin-top: 20px"
+        />
+      </div>
+      <ul id="recommendations"></ul>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
