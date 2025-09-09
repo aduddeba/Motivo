@@ -1,1 +1,1 @@
-An app that finds your perfect car for you!
+An app that finds your dream car!
