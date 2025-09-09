@@ -1,2 +1,1 @@
-An app that finds your perfect car for you!\n
---------------WORK IN PROGRESS--------------
+An app that finds your perfect car for you!
