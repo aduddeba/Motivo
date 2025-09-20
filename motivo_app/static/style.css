@@ -1,0 +1,128 @@
+
+body, .voila-app, .jp-NotebookPanel {
+    background-color: #cce8ff !important;
+}
+
+/* Optional: make the notebook area transparent so your container stands out */
+.jp-Notebook, .jp-Cell {
+    background-color: transparent !important;
+}
+
+/* Center the main container vertically if needed */
+#main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh; /* ensures container fills at least full height */
+    justify-content: center;
+}
+
+#title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;                     /* spacing between elements */
+    padding: 40px;
+    background-color: #ffffff;     /* container background */
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    max-width: 650px;
+    width: 90%;
+    margin: 50px auto;             /* centers container on page */
+    transition: all 1s ease;
+}
+
+
+
+#title:hover {
+    background-color: #3454c9;     /* container background */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important;
+    transition: all 1s ease;
+}
+
+#title:hover h1 {
+    color: #ffffff !important;
+}
+
+/* Make all cells match the background */
+.jp-Cell {
+    background-color: #d0f0fd !important;
+    border: none !important;       /* optional: remove cell borders */
+}
+
+/* Optional: outputs transparent so background shows through */
+.output_wrapper, .output {
+    background: transparent !important;
+}
+
+/* Headings */
+h1 {
+  color: rgb(52, 71, 150) !important;
+  font-family: 'Segoe UI', Tahoma, sans-serif !important;
+  font-size: 2.4em !important;
+  text-align: center !important;
+  margin-bottom: 30px !importwant;
+  letter-spacing: 1px !important;
+}
+
+
+/* Buttons */
+button {
+  background: linear-gradient(45deg, #4343de, #4354ec);
+  box-shadow: 0 5px 30px #3454c9, 0 -5px 30px #3454c9;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 1px 1px;
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 1s ease;
+}
+
+#title:hover {
+    color: white;
+    background-color: #3454c9;     /* new color on hover */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25) !important;
+    transition: all 0.3s ease;     /* optional: smooth hover transition */
+}
+
+
+/* Center widgets */
+.widget-label {
+  font-weight: 600 !important;
+  text-align: center !important;
+  color: #264653 !important;
+  font-size: 10px !important;
+  margin-bottom: 12px !important;  /* more spacing */
+  font-family: 'Segoe UI', Tahoma, sans-serif !important;
+}
+
+/* Main results container */
+#results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #f5f5f5;     /* optional light background for the area */
+    border-radius: 16px;
+    padding: 20px;
+    max-width: 650px;
+    width: 90%;
+    margin: 1px auto;
+    transition: all 1s ease;
+}
+
+
+
+.result-item:hover {
+    background-color: #3454c9;      /* hover color */
+    color: white;                   /* text turns white */
+    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+}
+
+.result-item a {
+    color: inherit;                 /* inherits text color from parent */
+    text-decoration: none;          /* remove underline */
+    font-weight: 600;
+    font-size: 16px;
+    text-align: center;
+}

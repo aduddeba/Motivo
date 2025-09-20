@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Motivo - Find your dream car!</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    <h1 style="text-align: center; color: blue">
+      Motivo: Find your dream car!
+    </h1>
+
+    <form method="POST" style="text-align: center">
+      <label>Min Price:</label>
+      <select name="min_price">
+        <option>5000</option>
+        <option>10000</option>
+        <option>15000</option>
+        <option>20000</option>
+        <option>25000</option>
+      </select>
+      <br /><br />
+
+      <label>Max Price:</label>
+      <select name="max_price">
+        <option>10000</option>
+        <option>20000</option>
+        <option>30000</option>
+        <option>40000</option>
+        <option>50000</option>
+        <option>60000</option>
+      </select>
+      <br /><br />
+
+      <label>Fuel:</label>
+      <select name="fuel">
+        <option>Gasoline</option>
+        <option>Diesel</option>
+        <option>Hybrid</option>
+        <option>Electric</option>
+      </select>
+      <br /><br />
+
+      <label>Body:</label>
+      <select name="body">
+        <option>Sedan</option>
+        <option>SUV</option>
+        <option>Truck</option>
+        <option>Coupe</option>
+        <option>Hatchback</option>
+        <option>Convertible</option>
+      </select>
+      <br /><br />
+
+      <label>Min Rating:</label>
+      <select name="min_rating">
+        <option>1.0</option>
+        <option>2.0</option>
+        <option>3.0</option>
+        <option>4.0</option>
+        <option>5.0</option>
+      </select>
+      <br /><br />
+
+      <button type="submit">Search</button>
+    </form>
+  </body>
+</html>
