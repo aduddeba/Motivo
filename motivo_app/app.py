@@ -1,12 +1,48 @@
 from flask import Flask, render_template, request
 import pandas as pd
 import re
+import joblib
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import KMeans
+#import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 
-# Load dataset once
+# ===============================
+# Load dataset and clean data
+# ===============================
 df = pd.read_csv("vehicles_dataset.csv")
+df.dropna(inplace=True)
+df.columns = df.columns.str.strip().str.lower()
 
+# ===============================
+# Clustering setup
+# ===============================
+features = ["price", "mileage", "cylinders", "year", "doors"]
+X = df[features].copy()
+
+# Scale
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Cluster (k chosen from elbow method)
+kmeans = KMeans(n_clusters=5, random_state=42)
+df["category"] = kmeans.fit_predict(X_scaled)
+
+# Mapping of cluster numbers -> labels
+cluster_labels = {
+    0: "Luxury Efficient",
+    1: "Performance Sports",
+    2: "Luxury Premium",
+    3: "Budget Commuter",
+    4: "Used Premium"
+}
+
+df["category_label"] = df["category"].map(cluster_labels)
+
+# ===============================
+# Helper functions
+# ===============================
 
 # Clean model names
 def clean_model_name(model: str) -> str:
@@ -73,6 +109,7 @@ def index():
         body = request.form["body"]
         make = request.form["make"]
 
+        # Filter
         filtered_df = df[
             (df["price"] >= min_price) &
             (df["price"] <= max_price) &
@@ -80,14 +117,13 @@ def index():
             (df["body"].str.lower() == body.lower())
         ]
         if make != "Any":
-            filtered_df = filtered_df[(df["make"].str.lower() == make.lower())]
+            filtered_df = filtered_df[df["make"].str.lower() == make.lower()]
 
-        # Rank cars before building results
-        ranked_df = rank_cars(filtered_df)
+        scored_df = rank_cars(filtered_df)
 
         # Deduplicate by make + model
         visited, results = set(), []
-        for _, row in ranked_df.iterrows():
+        for _, row in scored_df.iterrows():
             parts = row["name"].strip().split()
             if len(parts) < 2:
                 continue
@@ -101,13 +137,15 @@ def index():
                     "make": make,
                     "model": model,
                     "url": url,
-                    "score": row["score"]
+                    "score": row["score"],
+                    "category": row["category_label"]  # 🚀 show ML group instead of score
                 })
                 visited.add((parts[0], parts[1]))
 
         return render_template("results.html", results=results)
 
     return render_template("index.html")
+
 
 
 if __name__ == "__main__":
