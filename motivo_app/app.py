@@ -18,26 +18,37 @@ df.columns = df.columns.str.strip().str.lower()
 # ===============================
 # Clustering setup
 # ===============================
-features = ["price", "mileage", "cylinders", "year", "doors"]
+features = ["price", "mileage", "cylinders", "doors", "body"]
 X = df[features].copy()
 
-# Scale
+# One-hot encode 'body'
+X = pd.get_dummies(X, columns=["body"], drop_first=True)
+
+# Save encoded feature names
+encoded_features = X.columns.tolist()
+
 scaler = StandardScaler()
 X_scaled = scaler.fit_transform(X)
 
 # Cluster (k chosen from elbow method)
-kmeans = KMeans(n_clusters=5, random_state=42)
+kmeans = KMeans(n_clusters=6, random_state=42)
 df["category"] = kmeans.fit_predict(X_scaled)
+
+# Add encoded columns back into df
+for col in X.columns:
+    df[col] = X[col]
 
 # Mapping of cluster numbers -> labels
 cluster_labels = {
-    0: "Luxury Efficient",
-    1: "Performance Sports",
-    2: "Luxury Premium",
-    3: "Budget Commuter",
-    4: "Used Premium"
+    0: "Standard Premium SUV",
+    1: "High-End Truck/Performance Vehicle",
+    2: "New Sedan (Commuter/Mid-Range)",
+    3: "New Luxury Convertible",
+    4: "New Efficient Hatchback/Compact",
+    5: "New Premium Van/High-Power Utility"
 }
 
+# Apply mapping
 df["category_label"] = df["category"].map(cluster_labels)
 
 # ===============================
