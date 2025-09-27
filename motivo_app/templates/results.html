@@ -13,10 +13,15 @@
     {% if results %}
     <ul style="text-align: center; list-style: none; padding: 0">
       {% for car in results %}
-      <li>
-        <a href="{{ car.url }}" target="_blank"
-          >{{ car.make }} {{ car.model }}</a
-        >
+      <li style="margin: 12px 0; font-size: 1.2rem">
+        <a href="{{ car.url }}" target="_blank">
+          {{ car.make }} {{ car.model }}
+        </a>
+        <br />
+        <small style="color: gray">
+          🚗 Category: {{ car.category }} | 🔥 Match Score: {{
+          "%.0f"|format(car.score) }}
+        </small>
       </li>
       {% endfor %}
     </ul>
