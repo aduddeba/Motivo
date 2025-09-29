@@ -15,6 +15,36 @@ df = pd.read_csv("vehicles_dataset.csv")
 df.dropna(inplace=True)
 df.columns = df.columns.str.strip().str.lower()
 
+# Remove trim from the name for easy URL generation
+def strip_trim_from_name(row, name_col="name", trim_col="trim"):
+    name = str(row.get(name_col, "") or "")
+    trim = row.get(trim_col, "")
+    if pd.isna(trim) or trim is None:
+        return name
+
+    trim = str(trim).strip()
+    if trim == "":
+        return name
+
+    # escape regex metacharacters in trim
+    esc = re.escape(trim)
+
+    # pattern:
+    #  - match " - TRIM" or "— TRIM" or ": TRIM"
+    #  - match "(TRIM)"
+    #  - match trim as a whole word (so single-letter 'S' won't match 'Soul')
+    pattern = rf'(?i)(?:\s*[-–—:]\s*{esc}|\s*\(\s*{esc}\s*\)|\b{esc}\b)'
+
+    # remove occurrences that match the pattern
+    new_name = re.sub(pattern, ' ', name)
+
+    # collapse multiple spaces and trim leading/trailing whitespace
+    new_name = re.sub(r'\s+', ' ', new_name).strip()
+
+    return new_name
+
+df["name_trim"] = df.apply(strip_trim_from_name, axis=1)
+
 # ===============================
 # Clustering setup
 # ===============================
@@ -64,7 +94,7 @@ def clean_model_name(model: str) -> str:
         "select", "light", "long", "gt", "a-spec", "edition", "platinum",
         "sel", "2lt", "lt", "sxt", "sv", "s", "14t", "l", "latitude",
         "preferred", "active", "sle", "r/t", "denali", "wilderness", "turbo", "altitude",
-        "pursuit", "3lt", "luxe", "eawd", "awd", "laredo", "dynamic"
+        "pursuit", "3lt", "luxe", "eawd", "awd", "laredo", "dynamic", "1500", "2500", "3500"
     }
 
     words = model.lower().split()
@@ -135,7 +165,7 @@ def index():
         # Deduplicate by make + model
         visited, results = set(), []
         for _, row in scored_df.iterrows():
-            parts = row["name"].strip().split()
+            parts = row["name_trim"].strip().split()
             if len(parts) < 2:
                 continue
 
