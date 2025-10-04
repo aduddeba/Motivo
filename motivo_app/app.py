@@ -4,6 +4,8 @@ import re
 import joblib
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
+import requests
+from urllib.parse import quote_plus
 #import matplotlib.pyplot as plt
 
 app = Flask(__name__)
@@ -94,7 +96,7 @@ def clean_model_name(model: str) -> str:
         "select", "light", "long", "gt", "a-spec", "edition", "platinum",
         "sel", "2lt", "lt", "sxt", "sv", "s", "14t", "l", "latitude",
         "preferred", "active", "sle", "r/t", "denali", "wilderness", "turbo", "altitude",
-        "pursuit", "3lt", "luxe", "eawd", "awd", "laredo", "dynamic", "1500", "2500", "3500"
+        "pursuit", "3lt", "luxe", "eawd", "awd", "laredo", "dynamic"
     }
 
     words = model.lower().split()
@@ -140,6 +142,7 @@ def rank_cars(df):
     return df.sort_values("score", ascending=False)
 
 
+
 # Home page with form
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -154,11 +157,12 @@ def index():
         filtered_df = df[
             (df["price"] >= min_price) &
             (df["price"] <= max_price) &
-            (df["fuel"].str.lower() == fuel.lower()) &
-            (df["body"].str.lower() == body.lower())
+            (df["fuel"].str.lower() == fuel.lower())
         ]
         if make != "Any":
             filtered_df = filtered_df[df["make"].str.lower() == make.lower()]
+        if body != "Any":
+            filtered_df = filtered_df[df["body"].str.lower() == body.lower()]
 
         scored_df = rank_cars(filtered_df)
 
@@ -170,10 +174,11 @@ def index():
                 continue
 
             car = (parts[0], parts[1], " ".join(parts[2:]))
+            make, model = car[1], car[2]
+            model_url = clean_model_name(model)
+            url = f"https://www.cars.com/research/{make.lower()}-{model_url}-2025/"
+
             if (parts[0], parts[1]) not in visited:
-                make, model = car[1], car[2]
-                model_url = clean_model_name(model)
-                url = f"https://cars.usnews.com/cars-trucks/{make.lower()}/{model_url}"
                 results.append({
                     "make": make,
                     "model": model,
