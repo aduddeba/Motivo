@@ -1,99 +1,72 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>Motivo - Find your dream car!</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Find Your Dream Car</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
+    <style>
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(120deg, #1b1b1b, #333);
+        color: white;
+        font-family: "Poppins", sans-serif;
+        margin: 0;
+      }
+
+      .container {
+        display: flex;
+        flex-direction: column; /* ✅ vertical layout */
+        align-items: center; /* ✅ horizontally center inner items */
+        text-align: center;
+        max-width: 600px;
+        padding: 2rem;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 0.5em;
+      }
+
+      p {
+        font-size: 1.1rem;
+        line-height: 1.5em;
+        color: #ccc;
+        margin-bottom: 2em;
+      }
+
+      button {
+        background-color: #e63946;
+        border: none;
+        padding: 0.7em 1.4em; /* ✅ shorter button */
+        border-radius: 8px;
+        font-size: 1.1rem;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+        width: fit-content; /* ✅ button shrinks to text */
+      }
+
+      button:hover {
+        background-color: #f65c6b;
+        transform: scale(1.05);
+      }
+    </style>
   </head>
   <body>
-    <h1 style="text-align: center; color: blue">
-      Motivo: Find your dream car!
-    </h1>
-
-    <form method="POST" style="text-align: center">
-      <label>Min Price:</label>
-      <select name="min_price">
-        <option>5000</option>
-        <option selected>10000</option>
-        <option>15000</option>
-        <option>20000</option>
-        <option>25000</option>
-        <option>40000</option>
-        <option>50000</option>
-      </select>
-      <br /><br />
-
-      <label>Max Price:</label>
-      <select name="max_price">
-        <option>10000</option>
-        <option>20000</option>
-        <option>30000</option>
-        <option>40000</option>
-        <option selected>50000</option>
-        <option>60000</option>
-        <option>70000</option>
-        <option>80000</option>
-      </select>
-      <br /><br />
-
-      <label>Fuel:</label>
-      <select name="fuel">
-        <option>Gasoline</option>
-        <option>Diesel</option>
-        <option>Hybrid</option>
-        <option>Electric</option>
-      </select>
-      <br /><br />
-
-      <label>Body:</label>
-      <select name="body">
-        <option>Any</option>
-        <option>Sedan</option>
-        <option>SUV</option>
-        <option>Pickup Truck</option>
-        <option>Passenger Van</option>
-        <option>Cargo Van</option>
-        <option>Hatchback</option>
-        <option>Convertible</option>
-        <option>Minivan</option>
-      </select>
-      <br /><br />
-
-      <label>Make:</label>
-      <select name="make">
-        <option>Any</option>
-        <option>Jeep</option>
-        <option>GMC</option>
-        <option>Dodge</option>
-        <option>RAM</option>
-        <option>Nissan</option>
-        <option>Ford</option>
-        <option>Hyundai</option>
-        <option>Chevrolet</option>
-        <option>Volkswagen</option>
-        <option>Chrysler</option>
-        <option>Kia</option>
-        <option>Mazda</option>
-        <option>Subaru</option>
-        <option>Audi</option>
-        <option>BMW</option>
-        <option>Toyota</option>
-        <option>Buick</option>
-        <option>Mercedes-Benz</option>
-        <option>Honda</option>
-        <option>Lincoln</option>
-        <option>Cadillac</option>
-        <option>INFINITI</option>
-        <option>Lexus</option>
-        <option>Land Rover</option>
-        <option>Volvo</option>
-      </select>
-
-      <br /><br />
-
-      <button type="submit">Search</button>
-    </form>
+    <div class="container">
+      <h1>Find Your Dream Car</h1>
+      <p>
+        Answer a few quick questions and discover which car truly fits your
+        personality, preferences, and lifestyle.
+      </p>
+      <button onclick="window.location.href='/quiz'">Start Quiz</button>
+    </div>
   </body>
 </html>
