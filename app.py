@@ -20,6 +20,8 @@ reverse_target_encoder = {v: k for k, v in target_encoder.items()}
 
 df = pd.read_csv(DATA_PATH)
 
+df.loc[94, 'price'] = 60000.0 # Fixing a missing price value
+
 # Load questions
 with open("questions.json", "r") as f:
     QUESTIONS = json.load(f)
