@@ -26,18 +26,15 @@ with open("questions.json", "r") as f:
 
 def recommend_car(answers, df=df, features=features):
     filtered = df.copy()
-    print("User answers:", answers)
     for feature, value in answers.items():
         if feature not in df.columns:
             continue
         if feature in ['price']:
             value = float(value)
             filtered = filtered[filtered[feature] <= value]
-            print("\n\n\n\n\nPrice:", filtered)
             
         elif feature in ['mileage']:
             filtered = filtered[filtered[feature] >= float(value)]
-            print("\n\n\n\n\nMileage:", filtered)
         elif feature in ['fuel']:
             '''
             if (value == 'Gasoline'):
@@ -49,7 +46,6 @@ def recommend_car(answers, df=df, features=features):
             '''
             filtered = filtered[filtered[feature] == value]
         elif feature in ['body']:
-            print("\n\n\nEncoding:", value, filtered[filtered['body'] == "Cargo Van"])
             '''
             if (value == 'SUV'):
                 value = 0
@@ -121,9 +117,7 @@ def submit_answer():
 def predict():
     user_data = session.get("answers", {})
     matches = recommend_car(user_data)
-    print("Matches (raw):", matches['name'])
     matches_clean = matches.fillna('')
-    print("Matches found:", len(matches))
 
     if matches_clean.empty:
         dream_car = None
@@ -140,13 +134,11 @@ def predict():
         # --- Extract make and model safely ---
 
         make, model = matches_clean.iloc[v_num]['make'], matches_clean.iloc[v_num]['model']
-        print("Make, Model:", make, model)
         model = "".join(model).lower()
-        model = model.replace(" ", "-") if model else ""
+        model = model.replace(" ", "-").replace("+", "") if model else ""
 
         # --- Construct cars.com URL ---
         url = f"https://www.cars.com/research/{make.lower()}-{model}-2025/"
-        print("Dream car:", dream_car, url)
 
     return jsonify({
             "dream_car": dream_car,
