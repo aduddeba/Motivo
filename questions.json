@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "question": "What's your maximum budget (USD)?",
+    "type": "number",
+    "key": "price"
+  },
+  {
+    "id": 2,
+    "question": "Do you prefer electric, hybrid, or gasoline?",
+    "type": "select",
+    "options": ["Electric", "Hybrid", "Gasoline"],
+    "key": "fuel"
+  },
+  {
+    "id": 3,
+    "question": "What type of car body do you prefer?",
+    "type": "select",
+    "options": [
+      "SUV",
+      "Pickup Truck",
+      "Sedan",
+      "Cargo Van",
+      "Passenger Van",
+      "Hatchback",
+      "Convertible",
+      "Minivan"
+    ],
+    "key": "body"
+  },
+  {
+    "id": 4,
+    "question": "What's the minimum mileage (MPG) you expect?",
+    "type": "number",
+    "key": "mileage"
+  }
+]

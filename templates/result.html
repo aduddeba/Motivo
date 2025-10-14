@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Your Dream Car</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
+        color: white;
+        font-family: "Poppins", sans-serif;
+        text-align: center;
+      }
+      h1 {
+        font-size: 2.4rem;
+        margin-bottom: 0.5em;
+      }
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 1em;
+      }
+      a {
+        color: #00ffcc;
+        text-decoration: none;
+        transition: 0.3s;
+      }
+      a:hover {
+        color: #66ffe0;
+        text-decoration: underline;
+      }
+      .card {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 2em 3em;
+        border-radius: 15px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+      }
+      button {
+        margin-top: 2em;
+        background-color: #ff5c5c;
+        border: none;
+        padding: 0.8em 1.6em;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      button:hover {
+        background-color: #ff7b7b;
+        transform: scale(1.05);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Your Dream Car Is...</h1>
+      {% set car = request.args.get('car') %} {% set url =
+      request.args.get('url') %}
+      <h2><a href="{{ url }}" target="_blank">{{ car }}</a></h2>
+      <p>Click on your dream car name to learn more!</p>
+      <button onclick="window.location.href='/'">🔁 Retake Quiz</button>
+    </div>
+  </body>
+</html>
