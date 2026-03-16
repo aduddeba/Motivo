@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dream Car Quiz</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <style>
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(120deg, #141e30, #243b55);
+        color: white;
+        font-family: "Poppins", sans-serif;
+        text-align: center;
+      }
+
+      #quiz-container {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 2.5em;
+        border-radius: 15px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+      }
+
+      h2 {
+        font-size: 1.6rem;
+        margin-bottom: 1em;
+      }
+
+      select,
+      input {
+        width: 80%;
+        padding: 0.7em;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        margin-bottom: 1em;
+        text-align: center;
+      }
+
+      button {
+        background-color: #ff6b6b;
+        border: none;
+        padding: 0.8em 1.6em;
+        border-radius: 8px;
+        font-size: 1rem;
+        color: white;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+
+      button:hover {
+        background-color: #ff8787;
+        transform: scale(1.05);
+      }
+
+      #progress {
+        margin-top: 1em;
+        font-size: 0.9rem;
+        color: #ddd;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="quiz-container">
+      <h2 id="question-text">Loading question...</h2>
+      <div id="answer-area"></div>
+      <button id="next-btn" onclick="nextQuestion()">Next</button>
+      <div id="progress"></div>
+    </div>
+
+    <script>
+      let currentQ = 0;
+      let quizFinished = false;
+
+      window.onload = loadQuestion;
+
+      async function loadQuestion() {
+        if (quizFinished) return;
+
+        const res = await fetch(`/get_question/${currentQ}`);
+        const data = await res.json();
+
+        if (data.end) {
+          await finishQuiz();
+          return;
+        }
+
+        document.getElementById("question-text").textContent = data.question;
+        const answerArea = document.getElementById("answer-area");
+        answerArea.innerHTML = "";
+
+        if (data.type === "number") {
+          answerArea.innerHTML = `<input id="answer-input" type="number" placeholder="Enter value..." />`;
+        } else if (data.type === "select") {
+          const options = data.options
+            .map((opt) => `<option value="${opt}">${opt}</option>`)
+            .join("");
+          answerArea.innerHTML = `<select id="answer-input">${options}</select>`;
+        } else {
+          answerArea.innerHTML = `<input id="answer-input" type="text" placeholder="Your answer..." />`;
+        }
+
+        document.getElementById("progress").textContent = `Question ${
+          currentQ + 1
+        }`;
+      }
+
+      async function nextQuestion() {
+        if (quizFinished) return;
+
+        const inputEl = document.getElementById("answer-input");
+        if (!inputEl || !inputEl.value) {
+          alert("Please answer the question before proceeding!");
+          return;
+        }
+
+        // Save answer
+        const res = await fetch(`/get_question/${currentQ}`);
+        const data = await res.json();
+        if (!data.end) {
+          await fetch("/submit_answer", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ key: data.key, answer: inputEl.value }),
+          });
+        }
+
+        currentQ++;
+        loadQuestion();
+      }
+
+      async function finishQuiz() {
+        if (quizFinished) return;
+        quizFinished = true;
+
+        const predictRes = await fetch("/predict", { method: "POST" });
+        const result = await predictRes.json();
+
+        // Ensure matches is always an array
+        const matches = result.matches || [];
+        let carToShow =
+          result.dream_car || (matches[0] && matches[0].name) || "Unknown";
+
+        console.log("Prediction Result:", result);
+
+        if (!result.dream_car && result.message) alert(result.message);
+
+        window.location.href = `/result?car=${encodeURIComponent(
+          carToShow,
+        )}&url=${encodeURIComponent(result.url || "")}`;
+      }
+    </script>
+  </body>
+</html>
