@@ -26,16 +26,8 @@
       }
       h2 {
         font-size: 2rem;
-        margin-bottom: 1em;
-      }
-      a {
         color: #00ffcc;
-        text-decoration: none;
-        transition: 0.3s;
-      }
-      a:hover {
-        color: #66ffe0;
-        text-decoration: underline;
+        margin-bottom: 1em;
       }
       .card {
         background-color: rgba(255, 255, 255, 0.1);
@@ -64,10 +56,8 @@
   <body>
     <div class="card">
       <h1>Your Dream Car Is...</h1>
-      {% set car = request.args.get('car') %} {% set url =
-      request.args.get('url') %}
-      <h2><a href="{{ url }}" target="_blank">{{ car }}</a></h2>
-      <p>Click on your dream car name to learn more!</p>
+      <h2>{{ request.args.get('car') }}</h2>
+      <p>Based on your answers, this car perfectly matches your preferences!</p>
       <button onclick="window.location.href='/'">🔁 Retake Quiz</button>
     </div>
   </body>
