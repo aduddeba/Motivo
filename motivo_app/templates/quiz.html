@@ -148,8 +148,7 @@
 
         // Ensure matches is always an array
         const matches = result.matches || [];
-        let carToShow =
-          result.dream_car || (matches[0] && matches[0].name) || "Unknown";
+        let carToShow = result.dream_car || "Unknown";
 
         console.log("Prediction Result:", result);
 
