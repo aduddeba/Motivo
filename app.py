@@ -4,6 +4,7 @@ import pandas as pd
 import json
 import random
 from flask import redirect, url_for
+import re
 
 app = Flask(__name__)
 app.secret_key = "dreamcar_secret_key"  # needed for session storage
@@ -129,7 +130,7 @@ def predict():
     else:
         # Randomly select one car from the matches
         v_num = random.randint(0, len(matches_clean) - 1)
-        dream_car = matches_clean.iloc[v_num]['name']
+        dream_car = re.sub(r"\b\d{4}\b", "", matches_clean.iloc[v_num]['name']).strip()
         message = None
         matches_list = matches_clean.to_dict(orient="records")
 
