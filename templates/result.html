@@ -1,74 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Your Dream Car</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <style>
-      body {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background: linear-gradient(120deg, #0f2027, #203a43, #2c5364);
-        color: white;
-        font-family: "Poppins", sans-serif;
-        text-align: center;
-      }
-      h1 {
-        font-size: 2.4rem;
-        margin-bottom: 0.5em;
-      }
-      h2 {
-        font-size: 2rem;
-        margin-bottom: 1em;
-      }
-      a {
-        color: #00ffcc;
-        text-decoration: none;
-        transition: 0.3s;
-      }
-      a:hover {
-        color: #66ffe0;
-        text-decoration: underline;
-      }
-      .card {
-        background-color: rgba(255, 255, 255, 0.1);
-        padding: 2em 3em;
-        border-radius: 15px;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(10px);
-      }
-      button {
-        margin-top: 2em;
-        background-color: #ff5c5c;
-        border: none;
-        padding: 0.8em 1.6em;
-        border-radius: 8px;
-        font-size: 1rem;
-        color: white;
-        cursor: pointer;
-        transition: 0.3s;
-      }
-      button:hover {
-        background-color: #ff7b7b;
-        transform: scale(1.05);
-      }
-    </style>
-  </head>
-  <body>
-    <div class="card">
-      <h1>Your Dream Car Is...</h1>
-      {% set car = request.args.get('car') %} {% set url =
-      request.args.get('url') %}
-      <h2><a href="{{ url }}" target="_blank">{{ car }}</a></h2>
-      <p>Click on your dream car name to learn more!</p>
-      <button onclick="window.location.href='/'">🔁 Retake Quiz</button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Your Dream Car</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Poppins", sans-serif;
+      color: white;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 22px;
+      padding: 3rem 2.5rem;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      backdrop-filter: blur(18px);
+      animation: fadeUp 0.5s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.45);
+      margin-bottom: 0.6rem;
+    }
+
+    .car-name {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #a78bfa;
+      margin-bottom: 0.5rem;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 2rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
+      border: none;
+      border-radius: 12px;
+      padding: 0.9rem 1.5rem;
+      font-family: "Poppins", sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #6d28d9, #5b21b6);
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255, 255, 255, 0.13);
+      border-radius: 12px;
+      padding: 0.85rem 1.5rem;
+      font-family: "Poppins", sans-serif;
+      font-size: 0.95rem;
+      color: rgba(255, 255, 255, 0.75);
+      cursor: pointer;
+      text-decoration: none;
+      display: block;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.13);
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    {% set car = request.args.get('car') %}
+    {% set url = request.args.get('url') %}
+    {% set exact = request.args.get('exact', '1') == '1' %}
+
+    {% if exact %}
+      <p class="label">Your dream car is</p>
+    {% else %}
+      <p class="label">Closest match to your preferences</p>
+    {% endif %}
+    <h1 class="car-name">{{ car }}</h1>
+    {% if exact %}
+      <p class="subtitle">Based on your answers, this car fits your preferences.</p>
+    {% else %}
+      <p class="subtitle">No exact match was found — this is the car that best fits your answers.</p>
+    {% endif %}
+
+    <div class="actions">
+      {% if url %}
+        <a class="btn-primary" href="{{ url }}" target="_blank" rel="noopener">Research on Cars.com &rarr;</a>
+      {% endif %}
+      <a class="btn-secondary" href="/">Start over</a>
     </div>
-  </body>
+  </div>
+</body>
 </html>

@@ -1,72 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Find Your Dream Car</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <style>
-      body {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background: linear-gradient(120deg, #1b1b1b, #333);
-        color: white;
-        font-family: "Poppins", sans-serif;
-        margin: 0;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Find Your Dream Car</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-      .container {
-        display: flex;
-        flex-direction: column; /* ✅ vertical layout */
-        align-items: center; /* ✅ horizontally center inner items */
-        text-align: center;
-        max-width: 600px;
-        padding: 2rem;
-      }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Poppins", sans-serif;
+      color: white;
+    }
 
-      h1 {
-        font-size: 2.5rem;
-        margin-bottom: 0.5em;
-      }
+    .card {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 22px;
+      padding: 3rem 2.5rem;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+      backdrop-filter: blur(18px);
+      animation: fadeUp 0.5s ease both;
+    }
 
-      p {
-        font-size: 1.1rem;
-        line-height: 1.5em;
-        color: #ccc;
-        margin-bottom: 2em;
-      }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
-      button {
-        background-color: #e63946;
-        border: none;
-        padding: 0.7em 1.4em; /* ✅ shorter button */
-        border-radius: 8px;
-        font-size: 1.1rem;
-        color: white;
-        cursor: pointer;
-        transition: 0.3s;
-        width: fit-content; /* ✅ button shrinks to text */
-      }
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #a78bfa;
+      margin-bottom: 1rem;
+      line-height: 1.25;
+    }
 
-      button:hover {
-        background-color: #f65c6b;
-        transform: scale(1.05);
-      }
-    </style>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Find Your Dream Car</h1>
-      <p>
-        Answer a few quick questions and discover which car truly fits your
-        personality, preferences, and lifestyle.
-      </p>
-      <button onclick="window.location.href='/quiz'">Start Quiz</button>
-    </div>
-  </body>
+    p {
+      font-size: 0.98rem;
+      line-height: 1.65;
+      color: rgba(255, 255, 255, 0.5);
+      margin-bottom: 2.2rem;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
+      border: none;
+      border-radius: 12px;
+      padding: 0.9rem 1.5rem;
+      font-family: "Poppins", sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #6d28d9, #5b21b6);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Find Your Dream Car</h1>
+    <p>Answer a few quick questions and we'll narrow down the perfect car for your lifestyle and preferences.</p>
+    <button class="btn-primary" onclick="window.location.href='/quiz'">Get Started &rarr;</button>
+  </div>
+</body>
 </html>

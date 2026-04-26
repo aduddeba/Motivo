@@ -1,164 +1,385 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dream Car Quiz</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
-    <style>
-      body {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        background: linear-gradient(120deg, #141e30, #243b55);
-        color: white;
-        font-family: "Poppins", sans-serif;
-        text-align: center;
-      }
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Find Your Dream Car</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-      #quiz-container {
-        background: rgba(255, 255, 255, 0.1);
-        padding: 2.5em;
-        border-radius: 15px;
-        width: 90%;
-        max-width: 500px;
-        box-shadow: 0 4px 25px rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(10px);
-      }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: "Poppins", sans-serif;
+      color: white;
+    }
 
-      h2 {
-        font-size: 1.6rem;
-        margin-bottom: 1em;
-      }
+    .container {
+      width: 100%;
+      max-width: 540px;
+      padding: 1.5rem;
+    }
 
-      select,
-      input {
-        width: 80%;
-        padding: 0.7em;
-        border: none;
-        border-radius: 8px;
-        font-size: 1rem;
-        margin-bottom: 1em;
-        text-align: center;
-      }
+    .header {
+      text-align: center;
+      margin-bottom: 1.8rem;
+    }
 
-      button {
-        background-color: #ff6b6b;
-        border: none;
-        padding: 0.8em 1.6em;
-        border-radius: 8px;
-        font-size: 1rem;
-        color: white;
-        cursor: pointer;
-        transition: 0.3s;
-      }
+    .header h1 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #a78bfa;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
 
-      button:hover {
-        background-color: #ff8787;
-        transform: scale(1.05);
-      }
+    .progress {
+      display: flex;
+      gap: 7px;
+      justify-content: center;
+      margin-top: 0.9rem;
+    }
 
-      #progress {
-        margin-top: 1em;
-        font-size: 0.9rem;
-        color: #ddd;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="quiz-container">
-      <h2 id="question-text">Loading question...</h2>
-      <div id="answer-area"></div>
-      <button id="next-btn" onclick="nextQuestion()">Next</button>
-      <div id="progress"></div>
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      transition: background 0.35s, transform 0.35s;
+    }
+
+    .dot.done {
+      background: #4ade80;
+      transform: scale(1.1);
+    }
+
+    .dot.active {
+      background: #a78bfa;
+      transform: scale(1.2);
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 22px;
+      padding: 2.4rem 2rem;
+      backdrop-filter: blur(18px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    .question-text {
+      font-size: 1.25rem;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 1.8rem;
+      line-height: 1.45;
+      color: #f0f0ff;
+    }
+
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .option-btn {
+      background: rgba(255, 255, 255, 0.07);
+      border: 1.5px solid rgba(255, 255, 255, 0.13);
+      border-radius: 12px;
+      padding: 0.85rem 1.2rem;
+      font-family: "Poppins", sans-serif;
+      font-size: 0.98rem;
+      color: white;
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, transform 0.18s;
+      text-align: left;
+      width: 100%;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: rgba(167, 139, 250, 0.22);
+      border-color: #a78bfa;
+      transform: translateX(5px);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+      opacity: 0.6;
+    }
+
+    .number-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+
+    .number-input {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255, 255, 255, 0.18);
+      border-radius: 12px;
+      padding: 0.9rem 1.2rem;
+      font-family: "Poppins", sans-serif;
+      font-size: 1.05rem;
+      color: white;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    .number-input::-webkit-outer-spin-button,
+    .number-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+
+    .number-input:focus {
+      border-color: #a78bfa;
+    }
+
+    .number-input::placeholder {
+      color: rgba(255, 255, 255, 0.28);
+    }
+
+    .continue-btn {
+      background: linear-gradient(135deg, #7c3aed, #6d28d9);
+      border: none;
+      border-radius: 12px;
+      padding: 0.9rem 1.5rem;
+      font-family: "Poppins", sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .continue-btn:hover {
+      background: linear-gradient(135deg, #6d28d9, #5b21b6);
+      transform: translateY(-2px);
+    }
+
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.1rem;
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: color 0.2s;
+      user-select: none;
+    }
+
+    .back-link:hover {
+      color: rgba(255, 255, 255, 0.65);
+    }
+
+    .thinking {
+      text-align: center;
+      padding: 2.5rem 1rem;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(167, 139, 250, 0.18);
+      border-top-color: #a78bfa;
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+      margin: 0 auto 1.4rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .thinking p {
+      color: rgba(255, 255, 255, 0.55);
+      font-size: 1.05rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Find Your Dream Car</h1>
+      <div class="progress" id="progress-dots"></div>
     </div>
 
-    <script>
-      let currentQ = 0;
-      let quizFinished = false;
+    <div class="card" id="card">
+      <div id="content"></div>
+    </div>
 
-      window.onload = loadQuestion;
+    <span class="back-link" id="back-link" style="display:none" onclick="goBack()">← Previous question</span>
+  </div>
 
-      async function loadQuestion() {
-        if (quizFinished) return;
+  <script>
+    // history tracks answered questions for progress display and undo
+    let history = [];
+    const MAX_DOTS = 6;
 
-        const res = await fetch(`/get_question/${currentQ}`);
-        const data = await res.json();
+    function updateDots() {
+      const dots = document.getElementById("progress-dots");
+      dots.innerHTML = "";
+      for (let i = 0; i < MAX_DOTS; i++) {
+        const dot = document.createElement("div");
+        const isDone = i < history.length;
+        const isActive = i === history.length;
+        dot.className = "dot" + (isDone ? " done" : isActive ? " active" : "");
+        dots.appendChild(dot);
+      }
+    }
 
-        if (data.end) {
-          await finishQuiz();
-          return;
-        }
+    function renderQuestion(question) {
+      const content = document.getElementById("content");
+      content.innerHTML = `<p class="question-text">${question.question}</p>`;
 
-        document.getElementById("question-text").textContent = data.question;
-        const answerArea = document.getElementById("answer-area");
-        answerArea.innerHTML = "";
+      if (question.type === "select") {
+        const opts = document.createElement("div");
+        opts.className = "options";
+        question.options.forEach(opt => {
+          const btn = document.createElement("button");
+          btn.className = "option-btn";
+          btn.textContent = opt;
+          btn.onclick = () => {
+            document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
+            submitAnswer(question.id, opt);
+          };
+          opts.appendChild(btn);
+        });
+        content.appendChild(opts);
 
-        if (data.type === "number") {
-          answerArea.innerHTML = `<input id="answer-input" type="number" placeholder="Enter value..." />`;
-        } else if (data.type === "select") {
-          const options = data.options
-            .map((opt) => `<option value="${opt}">${opt}</option>`)
-            .join("");
-          answerArea.innerHTML = `<select id="answer-input">${options}</select>`;
-        } else {
-          answerArea.innerHTML = `<input id="answer-input" type="text" placeholder="Your answer..." />`;
-        }
+      } else if (question.type === "number") {
+        const group = document.createElement("div");
+        group.className = "number-group";
 
-        document.getElementById("progress").textContent = `Question ${
-          currentQ + 1
-        }`;
+        const input = document.createElement("input");
+        input.type = "number";
+        input.className = "number-input";
+        input.placeholder = question.placeholder || "Enter a number";
+        input.min = "0";
+        input.id = "num-input";
+
+        const btn = document.createElement("button");
+        btn.className = "continue-btn";
+        btn.textContent = "Continue →";
+        btn.onclick = () => {
+          const val = input.value.trim();
+          if (val === "") { input.focus(); return; }
+          btn.disabled = true;
+          submitAnswer(question.id, val);
+        };
+
+        input.addEventListener("keydown", e => {
+          if (e.key === "Enter") btn.click();
+        });
+
+        group.appendChild(input);
+        group.appendChild(btn);
+        content.appendChild(group);
+
+        setTimeout(() => input.focus(), 320);
       }
 
-      async function nextQuestion() {
-        if (quizFinished) return;
+      document.getElementById("back-link").style.display = history.length > 0 ? "block" : "none";
+    }
 
-        const inputEl = document.getElementById("answer-input");
-        if (!inputEl || !inputEl.value) {
-          alert("Please answer the question before proceeding!");
-          return;
-        }
+    function showQuestion(question) {
+      updateDots();
+      const card = document.getElementById("card");
 
-        // Save answer
-        const res = await fetch(`/get_question/${currentQ}`);
-        const data = await res.json();
-        if (!data.end) {
-          await fetch("/submit_answer", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ key: data.key, answer: inputEl.value }),
+      card.style.transition = "opacity 0.22s ease, transform 0.22s ease";
+      card.style.opacity = "0";
+      card.style.transform = "translateX(-18px)";
+
+      setTimeout(() => {
+        renderQuestion(question);
+        card.style.transform = "translateX(18px)";
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            card.style.opacity = "1";
+            card.style.transform = "translateX(0)";
           });
-        }
+        });
+      }, 230);
+    }
 
-        currentQ++;
-        loadQuestion();
+    function showThinking() {
+      const card = document.getElementById("card");
+      card.style.transition = "opacity 0.22s ease";
+      card.style.opacity = "0";
+      document.getElementById("back-link").style.display = "none";
+
+      setTimeout(() => {
+        card.innerHTML = `
+          <div class="thinking">
+            <div class="spinner"></div>
+            <p>Analyzing your preferences...</p>
+          </div>`;
+        card.style.opacity = "1";
+      }, 230);
+    }
+
+    async function submitAnswer(questionId, answer) {
+      history.push({ questionId, answer });
+
+      const res = await fetch("/submit_answer", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question_id: questionId, answer })
+      });
+      const data = await res.json();
+
+      if (data.done) {
+        showThinking();
+        // Minimum thinking time for UX, then redirect
+        const [prediction] = await Promise.all([
+          fetch("/predict", { method: "POST" }).then(r => r.json()),
+          new Promise(resolve => setTimeout(resolve, 1400))
+        ]);
+        const car = encodeURIComponent(prediction.dream_car || "");
+        const url = encodeURIComponent(prediction.url || "");
+        const exact = prediction.is_exact ? "1" : "0";
+        window.location.href = `/result?car=${car}&url=${url}&exact=${exact}`;
+      } else {
+        showQuestion(data.question);
       }
+    }
 
-      async function finishQuiz() {
-        if (quizFinished) return;
-        quizFinished = true;
+    async function goBack() {
+      if (history.length === 0) return;
+      history.pop();
 
-        const predictRes = await fetch("/predict", { method: "POST" });
-        const result = await predictRes.json();
+      const res = await fetch("/undo", { method: "POST" });
+      const data = await res.json();
+      showQuestion(data.question);
+    }
 
-        // Ensure matches is always an array
-        const matches = result.matches || [];
-        let carToShow =
-          result.dream_car || (matches[0] && matches[0].name) || "Unknown";
-
-        console.log("Prediction Result:", result);
-
-        if (!result.dream_car && result.message) alert(result.message);
-
-        window.location.href = `/result?car=${encodeURIComponent(
-          carToShow
-        )}&url=${encodeURIComponent(result.url || "")}`;
+    async function init() {
+      const res = await fetch("/next_question");
+      const question = await res.json();
+      if (question.done) {
+        window.location.href = "/";
+        return;
       }
-    </script>
-  </body>
+      updateDots();
+      const card = document.getElementById("card");
+      card.style.opacity = "0";
+      renderQuestion(question);
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          card.style.transition = "opacity 0.3s ease";
+          card.style.opacity = "1";
+        });
+      });
+    }
+
+    init();
+  </script>
+</body>
 </html>
