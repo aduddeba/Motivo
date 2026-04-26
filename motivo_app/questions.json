@@ -1,37 +1,116 @@
-[
-  {
-    "id": 1,
-    "question": "What's your maximum budget (USD)?",
-    "type": "number",
-    "key": "price"
-  },
-  {
-    "id": 2,
-    "question": "Do you prefer electric, hybrid, or gasoline?",
-    "type": "select",
-    "options": ["Electric", "Hybrid", "Gasoline"],
-    "key": "fuel"
-  },
-  {
-    "id": 3,
-    "question": "What type of car body do you prefer?",
-    "type": "select",
-    "options": [
-      "SUV",
-      "Pickup Truck",
-      "Sedan",
-      "Cargo Van",
-      "Passenger Van",
-      "Hatchback",
-      "Convertible",
-      "Minivan"
-    ],
-    "key": "body"
-  },
-  {
-    "id": 4,
-    "question": "What's the minimum mileage (MPG) you expect?",
-    "type": "number",
-    "key": "mileage"
+{
+  "start": "q_use_case",
+  "nodes": {
+    "q_use_case": {
+      "question": "What's your main use for this car?",
+      "type": "select",
+      "options": ["Daily commute", "Family vehicle", "Off-road / adventure", "Fun driving", "Work / hauling"],
+      "key": null,
+      "next": {
+        "Daily commute": "q_fuel_commute",
+        "Family vehicle": "q_seats",
+        "Off-road / adventure": "q_body_offroad",
+        "Fun driving": "q_fuel_fun",
+        "Work / hauling": "q_body_work"
+      }
+    },
+
+    "q_fuel_commute": {
+      "question": "How do you prefer to power your daily drive?",
+      "type": "select",
+      "options": ["Electric", "Hybrid", "Gasoline"],
+      "key": "fuel",
+      "next": "q_body_commute"
+    },
+    "q_body_commute": {
+      "question": "What body style fits your commute best?",
+      "type": "select",
+      "options": ["Sedan", "Hatchback", "SUV"],
+      "key": "body",
+      "next": "q_budget"
+    },
+
+    "q_seats": {
+      "question": "How many people do you usually need to seat?",
+      "type": "select",
+      "options": ["Up to 5", "6 or more"],
+      "key": null,
+      "next": {
+        "Up to 5": "q_body_family_small",
+        "6 or more": "q_body_family_large"
+      }
+    },
+    "q_body_family_small": {
+      "question": "Which body style suits your family best?",
+      "type": "select",
+      "options": ["SUV", "Sedan", "Hatchback"],
+      "key": "body",
+      "next": "q_budget"
+    },
+    "q_body_family_large": {
+      "question": "Which body style suits your family best?",
+      "type": "select",
+      "options": ["SUV", "Minivan", "Passenger Van"],
+      "key": "body",
+      "next": "q_budget"
+    },
+
+    "q_body_offroad": {
+      "question": "Which type of adventure vehicle are you after?",
+      "type": "select",
+      "options": ["SUV", "Pickup Truck"],
+      "key": "body",
+      "next": "q_drivetrain"
+    },
+    "q_drivetrain": {
+      "question": "How serious does the off-road capability need to be?",
+      "type": "select",
+      "options": ["Full 4WD — I go off-road", "AWD for all-weather grip", "No strong preference"],
+      "key": "drivetrain",
+      "value_map": {
+        "Full 4WD — I go off-road": "4WD",
+        "AWD for all-weather grip": "AWD",
+        "No strong preference": null
+      },
+      "next": "q_budget"
+    },
+
+    "q_fuel_fun": {
+      "question": "What fuel type suits your driving style?",
+      "type": "select",
+      "options": ["Gasoline", "Electric", "Hybrid"],
+      "key": "fuel",
+      "next": "q_body_fun"
+    },
+    "q_body_fun": {
+      "question": "Which body style matches your idea of fun?",
+      "type": "select",
+      "options": ["Convertible", "Sedan", "Hatchback", "SUV"],
+      "key": "body",
+      "next": "q_budget"
+    },
+
+    "q_body_work": {
+      "question": "What type of work vehicle do you need?",
+      "type": "select",
+      "options": ["Pickup Truck", "Cargo Van", "Passenger Van"],
+      "key": "body",
+      "next": "q_budget"
+    },
+
+    "q_budget": {
+      "question": "What's your maximum budget?",
+      "type": "number",
+      "placeholder": "e.g. 35000",
+      "key": "price",
+      "next": "q_mileage"
+    },
+    "q_mileage": {
+      "question": "What's the minimum fuel efficiency you need (MPG)? Enter 0 to skip.",
+      "type": "number",
+      "placeholder": "e.g. 30",
+      "key": "mileage",
+      "next": null
+    }
   }
-]
+}
