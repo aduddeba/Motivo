@@ -4,6 +4,7 @@ import pandas as pd
 import json
 import random
 import re
+from ml_engine import get_car_scores, get_next_question
 
 app = Flask(__name__)
 app.secret_key = "dreamcar_secret_key"
@@ -133,6 +134,10 @@ def submit_answer():
     if next_q == "q_mileage" and session["answers"].get("fuel") == "Electric":
         next_q = None
 
+    # If no next_q from tree, use adaptive selection
+    if next_q is None and next_node is None:
+        next_q = get_next_question(session)
+
     session["current_q"] = next_q
     session.modified = True
 
@@ -167,37 +172,58 @@ def undo():
 @app.route("/predict", methods=["POST"])
 def predict():
     user_data = session.get("answers", {})
-    matches = recommend_car(user_data)
-    matches_clean = matches.fillna('')
+    car_probs = get_car_scores(user_data)
+    top_cars = car_probs[:5]  # Top 5 cars
 
-    is_exact = not matches_clean.empty
+    results = []
+    for car, prob in top_cars:
+        dream_car = re.sub(r"\b\d{4}\b", "", str(car['name'])).strip()
+        make = str(car['make']).lower()
+        model = str(car['model']).lower().replace(" ", "-").replace("+", "")
+        url = f"https://www.cars.com/research/{make}-{model}-2025/"
+        results.append({
+            "dream_car": dream_car,
+            "url": url,
+            "match_score": round(prob * 100, 1)  # Percentage
+        })
 
-    if is_exact:
-        v_num = random.randint(0, len(matches_clean) - 1)
-        selected = matches_clean.iloc[v_num]
-    else:
-        scores = df.apply(lambda row: score_car(row, user_data), axis=1)
-        selected = df.loc[scores.idxmax()].fillna('')
-
-    dream_car = re.sub(r"\b\d{4}\b", "", str(selected['name'])).strip()
-    make = str(selected['make']).lower()
-    model = str(selected['model']).lower().replace(" ", "-").replace("+", "")
-    url = f"https://www.cars.com/research/{make}-{model}-2025/"
+    session["results"] = results
+    session.modified = True
 
     return jsonify({
-        "dream_car": dream_car,
-        "url": url,
-        "is_exact": is_exact
+        "results": results,
+        "top_car": results[0] if results else None  # For backward compatibility
     })
 
 
 @app.route("/result")
 def result():
-    car = request.args.get("car")
-    url = request.args.get("url")
-    if not car:
+    # For backward compatibility, but now we have multiple
+    results = session.get("results", [])
+    if not results:
         return redirect(url_for("quiz"))
-    return render_template("result.html", car=car, url=url)
+    return render_template("result.html", results=results)
+
+
+@app.route("/feedback", methods=["POST"])
+def feedback():
+    data = request.json
+    car_name = data.get("car")
+    liked = data.get("liked", False)
+
+    feedback_file = "feedback.json"
+    if os.path.exists(feedback_file):
+        with open(feedback_file, "r") as f:
+            feedbacks = json.load(f)
+    else:
+        feedbacks = []
+
+    feedbacks.append({"car": car_name, "liked": liked, "timestamp": pd.Timestamp.now().isoformat()})
+
+    with open(feedback_file, "w") as f:
+        json.dump(feedbacks, f)
+
+    return jsonify({"status": "ok"})
 
 
 if __name__ == "__main__":

@@ -4,7 +4,13 @@
     "q_use_case": {
       "question": "What's your main use for this car?",
       "type": "select",
-      "options": ["Daily commute", "Family vehicle", "Off-road / adventure", "Fun driving", "Work / hauling"],
+      "options": [
+        "Daily commute",
+        "Family vehicle",
+        "Off-road / adventure",
+        "Fun driving",
+        "Work / hauling"
+      ],
       "key": null,
       "next": {
         "Daily commute": "q_fuel_commute",
@@ -65,7 +71,11 @@
     "q_drivetrain": {
       "question": "How serious does the off-road capability need to be?",
       "type": "select",
-      "options": ["Full 4WD — I go off-road", "AWD for all-weather grip", "No strong preference"],
+      "options": [
+        "Full 4WD — I go off-road",
+        "AWD for all-weather grip",
+        "No strong preference"
+      ],
       "key": "drivetrain",
       "value_map": {
         "Full 4WD — I go off-road": "4WD",
@@ -103,6 +113,20 @@
       "type": "number",
       "placeholder": "e.g. 35000",
       "key": "price",
+      "next": "q_transmission"
+    },
+    "q_transmission": {
+      "question": "What transmission type do you prefer?",
+      "type": "select",
+      "options": ["Automatic", "Manual"],
+      "key": "transmission",
+      "next": "q_doors"
+    },
+    "q_doors": {
+      "question": "How many doors do you need?",
+      "type": "select",
+      "options": ["2", "4"],
+      "key": "doors",
       "next": "q_mileage"
     },
     "q_mileage": {
