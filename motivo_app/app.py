@@ -5,6 +5,8 @@ import json
 import random
 import re
 
+import comparison_engine as ce
+
 app = Flask(__name__)
 app.secret_key = "dreamcar_secret_key"
 
@@ -198,6 +200,32 @@ def result():
     if not car:
         return redirect(url_for("quiz"))
     return render_template("result.html", car=car, url=url)
+
+
+@app.route("/car/<path:car_name>/compare")
+def compare(car_name):
+    selected = ce.find_car(car_name, df)
+    if selected is None:
+        return redirect(url_for("quiz"))
+
+    competitors = ce.find_competitors(car_name, df, n=3)
+    selected_name = ce.vehicle_display_name(selected)
+    vehicle_names = [selected_name] + [ce.vehicle_display_name(row) for _, row in competitors.iterrows()]
+
+    comparison_table = ce.build_comparison_table(selected, competitors)
+    advantages, tradeoffs = ce.build_advantages_and_tradeoffs(selected, competitors)
+
+    return render_template(
+        "compare.html",
+        selected_name=selected_name,
+        vehicle_names=vehicle_names,
+        comparison_table=comparison_table,
+        summary=ce.generate_summary(selected, competitors),
+        advantages=advantages,
+        tradeoffs=tradeoffs,
+        reasons=ce.explain_recommendation(selected, session.get("answers", {})),
+        has_competitors=not competitors.empty,
+    )
 
 
 if __name__ == "__main__":

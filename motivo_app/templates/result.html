@@ -127,6 +127,9 @@
       {% if url %}
         <a class="btn-primary" href="{{ url }}" target="_blank" rel="noopener">Research on Cars.com &rarr;</a>
       {% endif %}
+      {% if car %}
+        <a class="btn-secondary" href="{{ url_for('compare', car_name=car) }}">Compare Competitors</a>
+      {% endif %}
       <a class="btn-secondary" href="/">Start over</a>
     </div>
   </div>
