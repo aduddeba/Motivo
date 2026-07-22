@@ -139,27 +139,6 @@
           rel="noopener"
           >Research on Cars.com &rarr;</a
         >
-        <div
-          style="
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            margin-top: 0.5rem;
-          "
-        >
-          <button
-            class="btn-secondary"
-            onclick="sendFeedback('{{ result.dream_car }}', true)"
-          >
-            👍 Like
-          </button>
-          <button
-            class="btn-secondary"
-            onclick="sendFeedback('{{ result.dream_car }}', false)"
-          >
-            👎 Dislike
-          </button>
-        </div>
       </div>
       {% if not loop.last %}
       <hr style="border: 1px solid rgba(255, 255, 255, 0.1); margin: 1rem 0" />
@@ -192,18 +171,5 @@
       <a class="btn-secondary" href="/">Start over</a>
     </div>
 
-    <script>
-      function sendFeedback(car, liked) {
-        fetch("/feedback", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ car: car, liked: liked }),
-        }).then((response) => {
-          if (response.ok) {
-            alert("Feedback recorded!");
-          }
-        });
-      }
-    </script>
   </body>
 </html>

@@ -134,8 +134,10 @@ def submit_answer():
     if next_q == "q_mileage" and session["answers"].get("fuel") == "Electric":
         next_q = None
 
-    # If no next_q from tree, use adaptive selection
-    if next_q is None and next_node is None:
+    # Only fall back to adaptive selection when this was a branching node
+    # that had no mapping for the given answer. A scripted "next": null
+    # (or the electric-vehicle skip above) means the quiz is meant to end.
+    if next_q is None and isinstance(next_node, dict):
         next_q = get_next_question(session)
 
     session["current_q"] = next_q
@@ -173,11 +175,19 @@ def undo():
 def predict():
     user_data = session.get("answers", {})
     car_probs = get_car_scores(user_data)
-    top_cars = car_probs[:5]  # Top 5 cars
 
+    # The dataset has multiple listings (different price/mileage/color) for
+    # the same car, which can all land in the top results. Keep only the
+    # highest-scoring listing per unique car (car_probs is already sorted
+    # by score descending).
     results = []
-    for car, prob in top_cars:
+    seen = set()
+    for car, prob in car_probs:
         dream_car = re.sub(r"\b\d{4}\b", "", str(car['name'])).strip()
+        if dream_car in seen:
+            continue
+        seen.add(dream_car)
+
         make = str(car['make']).lower()
         model = str(car['model']).lower().replace(" ", "-").replace("+", "")
         url = f"https://www.cars.com/research/{make}-{model}-2025/"
@@ -186,6 +196,9 @@ def predict():
             "url": url,
             "match_score": round(prob * 100, 1)  # Percentage
         })
+
+        if len(results) == 5:
+            break
 
     session["results"] = results
     session.modified = True
